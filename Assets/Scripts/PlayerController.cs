@@ -9,8 +9,8 @@ public class PlayerController : MonoBehaviour
 
     public AudioClip jumpSound;     // Son du saut
     public AudioClip deathSound;    // Son de la mort
-    public AudioClip pockSound;    // Son de la chute
-    public AudioClip breathSound;    // Son de la soufle
+    public AudioClip pockSound;     // Son de la chute
+    public AudioClip breathSound;   // Son de la soufle
 
     private AudioSource audioSource;
     // Référence au composant Rigidbody2D du joueur
