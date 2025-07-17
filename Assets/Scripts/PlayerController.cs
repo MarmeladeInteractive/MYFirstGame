@@ -27,10 +27,18 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
-        }else if(collision.gameObject.CompareTag("Obstacle")) {
-            Debug.Log("Game Over");
-            FindObjectOfType<GameManager>().GameOver();
         }
+        else if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            StartCoroutine(GameOverDelay());
+        }
+    }
+    
+    private IEnumerator GameOverDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Game Over");
+        FindObjectOfType<GameManager>().GameOver();
     }
     
 }
