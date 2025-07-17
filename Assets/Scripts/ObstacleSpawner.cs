@@ -5,39 +5,52 @@ using UnityEngine;
 public class ObstacleSpawner : MonoBehaviour
 {
     [Header("Obstacle Settings")]
-    public GameObject obstaclePrefab;
-    public float spawnRate = 2f;
-    public float spawnHeight = 2f;
-    public float verticalVariation = 2f;
+    public GameObject obstaclePrefab;      // Le prefab de l'obstacle à faire apparaître
+    public float spawnRate = 2f;           // Temps entre chaque apparition d'obstacle (en secondes)
+    public float spawnHeight = 2f;         // Hauteur de base d'apparition des obstacles
+    public float verticalVariation = 2f;   // Amplitude de variation aléatoire verticale
 
     [Header("Progression")]
-    public float acceleration = 0.01f;
-    private float currentSpeed = -1f;
-    private float timer = 0f;
+    public float acceleration = 0.01f;     // Pourcentage d'accélération (ex. 0.01 = +1% à chaque obstacle)
+    private float currentSpeed = -1f;      // Vitesse actuelle des obstacles (initialisée plus tard)
+    private float timer = 0f;              // Compteur de temps pour le spawn
 
     void Update()
     {
+        // On incrémente le temps depuis le dernier spawn
         timer += Time.deltaTime;
 
+        // Quand le temps est écoulé, on spawn un obstacle
         if (timer >= spawnRate)
         {
-            SpawnObstacle();
-            timer = 0f;
+            SpawnObstacle();      // Fait apparaître un nouvel obstacle
+            timer = 0f;           // Réinitialise le timer
 
+            // Accélère le rythme de spawn (les obstacles apparaissent plus vite)
             spawnRate *= 1f - acceleration;
+
+            // Augmente la vitesse des prochains obstacles
             currentSpeed *= 1f + acceleration;
         }
     }
 
+    // Méthode qui instancie un obstacle avec variation de position
     void SpawnObstacle()
     {
+        // Applique une variation aléatoire verticale à la position de base
         float randomYOffset = Random.Range(-verticalVariation, verticalVariation);
-        Vector3 spawnPos = new Vector3(20f, spawnHeight + randomYOffset, 0f);
 
+        // Position finale du spawn (toujours à X = 20 pour l'apparition hors écran à droite)
+        Vector3 spawnPos = new Vector3(20f + randomYOffset, spawnHeight, 0f);
+
+        // Crée l'obstacle dans la scène
         GameObject obstacle = Instantiate(obstaclePrefab, spawnPos, Quaternion.identity);
 
-        if (currentSpeed < 0f)currentSpeed = obstacle.GetComponent<ObstacleMovement>().speed;
+        // Si c'est le premier obstacle, on récupère sa vitesse initiale depuis le prefab
+        if (currentSpeed < 0f)
+            currentSpeed = obstacle.GetComponent<ObstacleMovement>().speed;
 
+        // On applique la vitesse actuelle (qui augmente à chaque spawn)
         obstacle.GetComponent<ObstacleMovement>().speed = currentSpeed;
     }
 }
