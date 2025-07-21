@@ -19,12 +19,16 @@ public class PlayerController : MonoBehaviour
     // Indique si le joueur est actuellement au sol
     private bool isGrounded = true;
 
+    private Animator animator;
+
     void Start()
     {
         // On récupère le Rigidbody2D attaché au joueur
         rb = GetComponent<Rigidbody2D>();
         // On récupère l’audio
         audioSource = GetComponent<AudioSource>();
+        // On récupère l’animator
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -43,6 +47,9 @@ public class PlayerController : MonoBehaviour
             if (pockSound != null) audioSource.PlayOneShot(pockSound);
             isGrounded = true;
 
+            // Relance l'animation quand on touche le sol
+            animator.speed = 1f;
+
             // Espace est maintenue au moment d’atterrir ? → on saute automatiquement
             if (Input.GetKey(KeyCode.Space))
             {
@@ -58,6 +65,9 @@ public class PlayerController : MonoBehaviour
             // pour qu'il n'y ai pas de nouveau saut
             jumpForce = 0f;
 
+            // pause anim à la mort
+            animator.speed = 0f;
+
             Debug.Log("Game Over");
             FindObjectOfType<GameManager>().GameOver(); // Appelle la méthode GameOver du GameManager
         }
@@ -72,5 +82,8 @@ public class PlayerController : MonoBehaviour
         if (breathSound != null) audioSource.PlayOneShot(breathSound);
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         isGrounded = false;
+
+        // Met en pause l'animation pendant le saut
+        animator.speed = 0f;
     }
 }
